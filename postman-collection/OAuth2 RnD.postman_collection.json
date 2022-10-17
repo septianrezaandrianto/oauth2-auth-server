@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "532c36f9-099b-46d4-a125-2470ca0caf69",
+		"name": "OAuth2 RnD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "this is my secret",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "septian-reza",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "read",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8081/authentication/oauth/token",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"authentication",
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test Controller",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1d3a0dbe-4e32-4434-add5-ee71a740517e",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8081/authentication/api/hello?name=Alex",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"authentication",
+						"api",
+						"hello"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Alex"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
