@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @Order(1)
@@ -20,12 +21,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            .antMatchers("/login").permitAll()
-            .antMatchers("/oauth/authorize")
-            .authenticated()
-            .and().formLogin()
-            .and().requestMatchers()
-            .antMatchers("/login","/oauth/authorize");
+            .antMatchers("/oauth/token", "/api/**").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and().cors()
+                .and().csrf()
+                .disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
     }
 
     @Override
