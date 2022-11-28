@@ -1,62 +1,75 @@
 package com.rnd.oauth2authserver.config;
 
+
+import com.rnd.oauth2authserver.exception.MyWebResponseExceptionTranslator;
+import com.rnd.oauth2authserver.service.ClientDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${security.oauth2.client.client-id}")
-    private String clientId;
-    @Value("${security.oauth2.client.client-secret}")
-    private String clientSecret;
-    @Value("${security.oauth2.client.scope}")
-    private String scope;
-    @Value("${security.oauth2.client.valid-access-token}")
-    private Integer validAccessToken;
-    @Value("${security.oauth2.client.authorized-grant-type}")
-    private String authorizedGrantType;
-
     @Autowired
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ClientDetailService clientDetailService;
+
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
-        oauthServer.tokenKeyAccess("isAuthenticated()")
-                .checkTokenAccess("isAuthenticated()");
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+        oauthServer.tokenKeyAccess("permitAll()")
+                .checkTokenAccess("isAuthenticated()")
+                .allowFormAuthenticationForClients();
     }
 
     @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient(clientId)
-                .authorizedGrantTypes(authorizedGrantType)
-                .secret(encoder().encode(clientSecret))
-                .scopes(scope)
-                .redirectUris("localhost:8081/authentication/api/hello")
-                .accessTokenValiditySeconds(validAccessToken)
-                .autoApprove(false);
+    public void configure(ClientDetailsServiceConfigurer configurer) throws Exception {
+        configurer.withClientDetails(clientDetailService);
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager);
+        endpoints.authenticationManager(authenticationManager)
+                .tokenStore(tokenStore())
+                .accessTokenConverter(accessTokenConverter())
+                .exceptionTranslator(new MyWebResponseExceptionTranslator());
     }
 
     @Bean
-    public BCryptPasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+    public TokenStore tokenStore() {
+        return new JwtTokenStore(accessTokenConverter()); // For JWT. Use in-memory, jdbc, or other if not JWT
     }
+
+    // Token converter. Needed for JWT
+    @Bean
+    public JwtAccessTokenConverter accessTokenConverter() {
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        converter.setSigningKey("SINARMASMSIG"); // symmetric key
+        return converter;
+    }
+
+    // Token services. Needed for JWT
+    @Bean
+    @Primary
+    public DefaultTokenServices tokenServices() {
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        return defaultTokenServices;
+    }
+
 }

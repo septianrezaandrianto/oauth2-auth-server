@@ -12,13 +12,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "this is my secret",
+							"key": "username",
+							"value": "id-2",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "septian-reza",
+							"key": "password",
+							"value": "secret-2",
 							"type": "string"
 						}
 					]
@@ -64,7 +64,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "1d3a0dbe-4e32-4434-add5-ee71a740517e",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJyZWFkIiwid3JpdGUiXSwiZXhwIjoxNjY5NjQ4MTg2LCJqdGkiOiJhZGNkZTg1YS0zZTIzLTQwM2QtYThmZi02ZDg0MTUwZDJjZWUiLCJjbGllbnRfaWQiOiJpZC0yIn0.vR_bWkECAIp9TeydpP6myBl723UBUz7rufXBFnMGTls",
 							"type": "string"
 						}
 					]
@@ -72,7 +72,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8081/authentication/api/hello?name=Alex",
+					"raw": "localhost:8081/authentication/api/hello",
 					"host": [
 						"localhost"
 					],
@@ -81,12 +81,47 @@
 						"authentication",
 						"api",
 						"hello"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "Alex"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Client Credential",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "basic aaa",
+						"type": "text"
+					},
+					{
+						"key": "X-CLIENT-KEY",
+						"value": "id-1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"grantType\" : \"client_credentials\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/authentication/login/clientCredential",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"authentication",
+						"login",
+						"clientCredential"
 					]
 				}
 			},

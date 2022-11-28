@@ -13,10 +13,15 @@ server:
 security:
   oauth2:
     client:
-      client-id: septian-reza
-      client-secret : this is my secret
       scope : read
       valid-access-token : 900
       authorized-grant-type : client_credentials
     resource:
       filter-order: 3
+      oauth-url: http://localhost:8081/authentication/oauth/token
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/oauth-db
+    username: postgres
+    password: rezaboys
