@@ -15,7 +15,6 @@ import java.util.Arrays;
 
 @Service
 public class ClientDetailService implements ClientDetailsService {
-
     @Autowired
     private ClientCredentialRepository clientCredentialRepository;
 
@@ -37,11 +36,9 @@ public class ClientDetailService implements ClientDetailsService {
         BaseClientDetails base = new BaseClientDetails();
         base.setClientId(clientData.getClientId());
         base.setClientSecret(getPasswordEncoder().encode(clientData.getClientSecret()));
-        base.setScope(Arrays.asList(scope, "write"));
+        base.setScope(Arrays.asList(scope));
         base.setAccessTokenValiditySeconds(validAccessToken);
-        base.setRefreshTokenValiditySeconds(20000);
-        base.setAuthorizedGrantTypes(Arrays.asList(authorizedGrantType, "password", "refresh_token"));
+        base.setAuthorizedGrantTypes(Arrays.asList(authorizedGrantType));
         return base;
     }
-
 }

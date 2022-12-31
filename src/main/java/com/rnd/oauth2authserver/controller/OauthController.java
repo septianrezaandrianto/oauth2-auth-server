@@ -52,14 +52,12 @@ public class OauthController {
 
         if (clientCredential == null) {
             if (clientKey == null || clientKey.equalsIgnoreCase(OauthConstant.EMPTY_STRING)) {
-                logger.error("{}{} MASOK 1 {}{}");
                 responseCode = OauthConstant.INVALID_CLIENT_KEY_STATUS;
                 responseMessage = OauthConstant.EMPTY_MESSAGE
                         .replace("{variable}", OauthConstant.X_CLIENT_KEY_HEADER);
                 return new ResponseEntity<ClientCredentialResponse>(new ClientCredentialResponse(responseCode,
                         responseMessage), HttpStatus.BAD_REQUEST);
             } else {
-                logger.error("{}{} MASOK 2 {}{}");
                 responseCode = OauthConstant.UNAUTHORIZED_STATUS;
                 responseMessage = OauthConstant.UNAUTHORIZED_MESSAGE
                         .replace("{variable}", "Unknown Client");
